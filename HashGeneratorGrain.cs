@@ -40,6 +40,30 @@ namespace Orleans2StatelessWorkers
             }
         }
 
+        public async Task Call_A_ToTemp()
+        {
+            Console.WriteLine("Making call A to a fellow grain");
+            ITempGrain grain = this.GrainFactory.GetGrain<ITempGrain>(1);
+
+            // SendNext;
+            grain.CallA().ContinueWith((t)=>
+            {
+                if(t.IsFaulted)
+                {
+                    Console.WriteLine("Task Faulted");
+                    Call_A_ToTemp();
+                }
+            }
+            );
+        }
+
+        public async Task Call_B_ToTemp()
+        {
+            Console.WriteLine("Making call B to a fellow grain");
+            ITempGrain grain = this.GrainFactory.GetGrain<ITempGrain>(1);
+            await grain.CallB();
+        }
+
         public async Task<string> GenerateHashAsync(string input)
         {
             var inputBytes = Encoding.UTF8.GetBytes(input);

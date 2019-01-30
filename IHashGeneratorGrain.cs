@@ -11,5 +11,7 @@ namespace Orleans2StatelessWorkers
         Task CallToFellowGrain();
         Task TempCall();
         Task<string> GenerateHashAsync(string input);
+        Task Call_A_ToTemp();
+        Task Call_B_ToTemp();
     }
 }

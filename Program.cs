@@ -43,7 +43,7 @@ namespace Orleans2StatelessWorkers
                 .Configure<EndpointOptions>(options =>
                     options.AdvertisedIPAddress = IPAddress.Loopback)
                 .ConfigureLogging(logging => logging.AddConsole()) // options.ResendOnTimeout = true; options.MaxResendCount = 60; 
-                .Configure<SiloMessagingOptions>(options => {options.ResponseTimeout = new TimeSpan(0,0,32); options.ResendOnTimeout = true; options.MaxResendCount = 60; });
+                .Configure<SiloMessagingOptions>(options => {options.ResponseTimeout = new TimeSpan(0,0,32); });
 
             var host = siloBuilder.Build();
             await host.StartAsync();
@@ -57,8 +57,8 @@ namespace Orleans2StatelessWorkers
                     options.ClusterId = "dev";
                     options.ServiceId = "Orleans2StatelessWorkers";
                 })
-                .ConfigureLogging(logging => logging.AddConsole())
-                .Configure<ClientMessagingOptions>(options => {options.ResponseTimeout = new TimeSpan(0,0,32); options.ResendOnTimeout = true; options.MaxResendCount = 60; });
+                .ConfigureLogging(logging => logging.SetMinimumLevel(LogLevel.Critical).AddConsole())
+                .Configure<ClientMessagingOptions>(options => {options.ResponseTimeout = new TimeSpan(0,0,130);});
 
             var client = clientBuilder.Build();
             await client.Connect();
@@ -76,7 +76,20 @@ namespace Orleans2StatelessWorkers
                 try{
                     Console.WriteLine("Client making a call");
                     //await hashGenerator.CallToFellowGrain();
-                    await hashGenerator.TempCall();
+                    // await hashGenerator.TempCall();
+                    hashGenerator.Call_A_ToTemp();
+                    await Task.Delay(1000);
+                    hashGenerator.Call_B_ToTemp();
+                    // hashGenerator.TempCall().ContinueWith((t)=>
+                    //     {
+                    //         if(t.IsFaulted)
+                    //         {
+                    //             Console.WriteLine("Got faulted");
+                    //             hashGenerator.TempCall();
+                    //         }
+                    //         // else if(t.I)
+                    //     }
+                    // );
                 }
                 catch (Exception ex)
                 {
