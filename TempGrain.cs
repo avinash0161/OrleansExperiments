@@ -28,7 +28,7 @@ namespace Orleans2StatelessWorkers
         public async Task CallA()
         {
             Console.WriteLine("Call A came to TempGrain");
-            await Task.Delay(34000);
+            await Task.Delay(20000);
         }
 
         public Task CallB()

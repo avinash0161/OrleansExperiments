@@ -13,9 +13,12 @@ namespace Orleans2StatelessWorkers
     {
         private HashAlgorithm hashAlgorithm;
 
+        private int counter;
+
         public HashGeneratorGrain()
         {
             this.hashAlgorithm = MD5.Create();
+            this.counter = 0;
         }
 
         public async Task TempCall()
@@ -46,22 +49,43 @@ namespace Orleans2StatelessWorkers
             ITempGrain grain = this.GrainFactory.GetGrain<ITempGrain>(1);
 
             // SendNext;
-            grain.CallA().ContinueWith((t)=>
+            grain.CallA().ContinueWith(async (t)=> 
             {
                 if(t.IsFaulted)
                 {
                     Console.WriteLine("Task Faulted");
                     Call_A_ToTemp();
                 }
+                else if (t.IsCompletedSuccessfully)
+                {
+                    Console.WriteLine("Task success");
+                    Console.WriteLine("Call_A_ToTemp: Counter value now is: " + counter);
+                    var selfGrain = this.GrainFactory.GetGrain<IHashGeneratorGrain>(0);
+                    await selfGrain.IncCounter();
+                    Console.WriteLine("Call_A_ToTemp: after increment: " + this.counter);
+                }
             }
             );
+
+        }
+
+        public async Task IncCounter() {
+            this.counter += 1;
         }
 
         public async Task Call_B_ToTemp()
         {
-            Console.WriteLine("Making call B to a fellow grain");
-            ITempGrain grain = this.GrainFactory.GetGrain<ITempGrain>(1);
-            await grain.CallB();
+            // Console.WriteLine("Making call B to a fellow grain");
+            // ITempGrain grain = this.GrainFactory.GetGrain<ITempGrain>(1);
+            // await grain.CallB();
+
+            Console.WriteLine("Call_B_ToTemp called");
+            Console.WriteLine("Call_B_ToTemp: Counter value now is: " + counter);
+            Console.WriteLine("Call_B_ToTemp: now sleep for 20s");
+            await Task.Delay(20000);
+            Console.WriteLine("Call_B_ToTemp: after sleep value: " + counter);
+            this.counter += 1;
+            Console.WriteLine("Call_B_ToTemp: after increment: " + this.counter);
         }
 
         public async Task<string> GenerateHashAsync(string input)

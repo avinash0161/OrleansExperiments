@@ -42,7 +42,7 @@ namespace Orleans2StatelessWorkers
                 })
                 .Configure<EndpointOptions>(options =>
                     options.AdvertisedIPAddress = IPAddress.Loopback)
-                .ConfigureLogging(logging => logging.AddConsole()) // options.ResendOnTimeout = true; options.MaxResendCount = 60; 
+                .ConfigureLogging(logging => logging.SetMinimumLevel(LogLevel.Critical).AddConsole()) // options.ResendOnTimeout = true; options.MaxResendCount = 60; 
                 .Configure<SiloMessagingOptions>(options => {options.ResponseTimeout = new TimeSpan(0,0,32); });
 
             var host = siloBuilder.Build();
@@ -78,7 +78,7 @@ namespace Orleans2StatelessWorkers
                     //await hashGenerator.CallToFellowGrain();
                     // await hashGenerator.TempCall();
                     hashGenerator.Call_A_ToTemp();
-                    await Task.Delay(1000);
+                    await Task.Delay(10000);
                     hashGenerator.Call_B_ToTemp();
                     // hashGenerator.TempCall().ContinueWith((t)=>
                     //     {

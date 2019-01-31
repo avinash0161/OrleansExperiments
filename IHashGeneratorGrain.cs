@@ -13,5 +13,7 @@ namespace Orleans2StatelessWorkers
         Task<string> GenerateHashAsync(string input);
         Task Call_A_ToTemp();
         Task Call_B_ToTemp();
+
+        Task IncCounter();
     }
 }
