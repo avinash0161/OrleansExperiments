@@ -42,7 +42,7 @@ namespace Orleans2StatelessWorkers
                 })
                 .Configure<EndpointOptions>(options =>
                     options.AdvertisedIPAddress = IPAddress.Loopback)
-                .ConfigureLogging(logging => logging.AddConsole()) // options.ResendOnTimeout = true; options.MaxResendCount = 60; 
+                .ConfigureLogging(logging => logging.SetMinimumLevel(LogLevel.Critical).AddConsole()) // options.ResendOnTimeout = true; options.MaxResendCount = 60; 
                 .Configure<SiloMessagingOptions>(options => {options.ResponseTimeout = new TimeSpan(0,0,32); });
 
             var host = siloBuilder.Build();
@@ -65,8 +65,8 @@ namespace Orleans2StatelessWorkers
 
             // 3. generate load
 
-            var hashGenerator = client.GetGrain<IHashGeneratorGrain>(0);
-
+            // var hashGenerator = client.GetGrain<IHashGeneratorGrain>(0);
+            var grainA=client.GetGrain<IOperatorA>(1);
             //while (true)
             //{
                 // var randomString = GenerateRandomString();
@@ -75,11 +75,13 @@ namespace Orleans2StatelessWorkers
 
                 try{
                     Console.WriteLine("Client making a call");
-                    hashGenerator.CallToFellowGrain();
+                    for(int i=0;i<10;++i)
+                        await grainA.ReceiveTuple(i+1);
+                    // hashGenerator.CallToFellowGrain();
                     // await hashGenerator.TempCall();
                     // hashGenerator.Call_A_ToTemp();
-                    await Task.Delay(1000);
-                    hashGenerator.Call_B_ToTemp();
+                    // await Task.Delay(1000);
+                    // hashGenerator.Call_B_ToTemp();
                     // hashGenerator.TempCall().ContinueWith((t)=>
                     //     {
                     //         if(t.IsFaulted)
