@@ -75,9 +75,9 @@ namespace Orleans2StatelessWorkers
 
                 try{
                     Console.WriteLine("Client making a call");
-                    //await hashGenerator.CallToFellowGrain();
+                    hashGenerator.CallToFellowGrain();
                     // await hashGenerator.TempCall();
-                    hashGenerator.Call_A_ToTemp();
+                    // hashGenerator.Call_A_ToTemp();
                     await Task.Delay(1000);
                     hashGenerator.Call_B_ToTemp();
                     // hashGenerator.TempCall().ContinueWith((t)=>

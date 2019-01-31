@@ -32,7 +32,8 @@ namespace Orleans2StatelessWorkers
             {
                 Console.WriteLine("Making call to a fellow grain");
                 ITempGrain grain = this.GrainFactory.GetGrain<ITempGrain>(1);
-                await grain.TempCall();
+                // await grain.TempCall();
+                grain.TempCall();
             }
             catch (Exception ex)
             {
@@ -48,9 +49,11 @@ namespace Orleans2StatelessWorkers
             // SendNext;
             grain.CallA().ContinueWith((t)=>
             {
-                if(t.IsFaulted)
+                //if(t.IsFaulted)
+                if(t.IsCompletedSuccessfully)
                 {
-                    Console.WriteLine("Task Faulted");
+                    // Console.WriteLine("Task Faulted");
+                    Console.WriteLine("Task Success");
                     Call_A_ToTemp();
                 }
             }
